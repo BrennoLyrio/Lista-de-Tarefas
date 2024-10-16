@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novo Cliente</title>
+</head>
+<body>
+    <h1>Cadastrar novo tarefa</h1>
+    <form action="/tarefas" method="post">
+        <label>Tarefa: <input type="text" name="item[nome]"></label><br>
+        <label>Status: 
+            <input type="hidden" name="item[status]" value="off"> <!-- Valor enviado se o checkbox não for marcado -->
+            <input type="checkbox" name="item[status]" value="on"> <!-- Valor enviado se o checkbox for marcado -->
+        </label><br>        
+        <button type="submit">Enviar</button>
+    </form>
+
+    <% if (typeof error !== 'undefined') { %>
+        <div style="color: red;"><%= error %></div>
+    <% } %>
+
+    <a href="/">Voltar</a>
+</body>
+</html>
