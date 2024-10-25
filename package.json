@@ -1,7 +1,7 @@
 {
   "name": "pratica-03",
   "version": "1.0.0",
-  "description": "",
+  "description": "Esta é uma API simples para gerenciar tarefas, permitindo a criação, edição, exclusão e filtragem de tarefas com base em seu status.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
