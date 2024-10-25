@@ -3,23 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Novo Cliente</title>
+    <title>Nova Tarefa</title>
 </head>
 <body>
-    <h1>Cadastrar novo tarefa</h1>
-    <form action="/tarefas" method="post">
-        <label>Tarefa: <input type="text" name="item[nome]"></label><br>
+    <h1>Cadastrar nova tarefa</h1>
+    <!-- <form action="/tarefas" method="post"> -->
+    <form id="tarefa-form">
+        <label>Tarefa: <input type="text" name="item[nome]" id="tarefa"></label><br>
         <label>Status: 
-            <input type="hidden" name="item[status]" value="off"> <!-- Valor enviado se o checkbox não for marcado -->
-            <input type="checkbox" name="item[status]" value="on"> <!-- Valor enviado se o checkbox for marcado -->
+            <!-- <input type="hidden" name="item[status]" value="off"> Valor enviado se o checkbox não for marcado -->
+            <input type="checkbox" name="item[status]" value="on" id="status"> <!-- Valor enviado se o checkbox for marcado -->
         </label><br>        
         <button type="submit">Enviar</button>
     </form>
 
-    <% if (typeof error !== 'undefined') { %>
-        <div style="color: red;"><%= error %></div>
-    <% } %>
-
+    <!-- <% if (typeof error !== 'undefined') { %>
+        <div class="error"><%= error %></div>
+    <% } %> -->
+    
+    <div id="error-message" style="color: red;"></div>
+    
     <a href="/">Voltar</a>
+
+    <script>
+        const form = document.querySelector('#tarefa-form');
+        const errorMessageDiv = document.getElementById('error-message');
+        form.addEventListener('submit', async (event) => {
+          event.preventDefault(); // Previne o comportamento padrão de recarregar a página
+
+          const formData = new FormData(form);
+          const data = {
+            nome: formData.get('item[nome]'),
+            status: formData.get('item[status]') || 'off', // Define como 'off' se o checkbox não for marcado
+          };
+
+          const response = await fetch('/tarefas', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+          });
+
+          
+        //   errorMessageDiv.innerText = 'Essa tarefa já existe!';
+
+          if (response.ok) {
+            // Redireciona para a página principal após o sucesso
+            window.location.href = '/';
+          } else {
+            const errorMessage = await response.text();
+            errorMessageDiv.innerText = errorMessage;
+            document.getElementById('tarefa').value = ''; // Limpa o campo de nome
+            errorMessageDiv.style.color = 'red';
+
+            // Limpa o formulário
+            form.reset();
+            
+          }
+        });
+    </script>
 </body>
 </html>

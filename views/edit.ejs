@@ -7,12 +7,45 @@
 </head>
 <body>
     <h1>Editar dados do item: <%= item.nome %></h1>
-    <form action="/tarefas/<%= id %>?_method=PUT" method="POST"> <!-- adicionei ?_method=PUT -->
-        <!-- <input type="hidden" name="_method" value="PUT"> -->
-        <label>Nome: <input type="text" name="item[nome]" value="<%= item.nome %>"></label><br>
-        <label>Status: <input type="checkbox" name="item[status]" value="on" <%= item.status === 'on' ? 'checked' : '' %> ></label><br>
+    <form id="edit-form">
+        <label>Nome: <input type="text" name="item[nome]" id="nome" value="<%= item.nome %>"></label><br>
+        <label>Status: 
+            <!-- <input type="hidden" name="item[status]" value="off"> Para garantir que 'off' seja enviado se não for marcado -->
+            <input type="checkbox" name="item[status]" value="on" id="status" <%= item.status === 'on' ? 'checked' : '' %> > <!-- Mantém o status atual -->
+        </label><br>
         <button type="submit">Enviar</button>
     </form>
+    
     <a href="/">Voltar</a>
+
+    <script>
+        const form = document.querySelector('#edit-form');
+        form.addEventListener('submit', async (event) => {
+          event.preventDefault(); // Previne o comportamento padrão de recarregar a página
+
+          const formData = new FormData(form);
+          const data = {
+            nome: formData.get('item[nome]'),
+            status: formData.get('item[status]') || 'off',
+          };
+
+          const response = await fetch(`/tarefas/<%= id %>`, {  // Adaptado para enviar ao ID correto
+            method: 'PUT',  // Método PUT para editar
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+          });
+
+          if (response.ok) {
+            // Redireciona para a página principal após o sucesso
+            window.location.href = '/';
+          } else {
+            // Mostra erro, se houver
+            const errorMessage = await response.text();
+            alert("Aconteceu um erro: " + errorMessage);
+          }
+        });
+    </script>
 </body>
 </html>
