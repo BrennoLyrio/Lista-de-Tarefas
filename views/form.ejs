@@ -10,7 +10,7 @@
     <form action="/tarefas" method="post">
         <label>Tarefa: <input type="text" name="item[nome]"></label><br>
         <label>Status: 
-            <input type="hidden" name="item[status]" value="off"> <!-- Valor enviado se o checkbox não for marcado -->
+            <!-- <input type="hidden" name="item[status]" value="off"> Valor enviado se o checkbox não for marcado -->
             <input type="checkbox" name="item[status]" value="on"> <!-- Valor enviado se o checkbox for marcado -->
         </label><br>        
         <button type="submit">Enviar</button>

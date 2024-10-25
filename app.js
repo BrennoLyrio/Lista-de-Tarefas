@@ -7,6 +7,10 @@ app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(methodOverride('_method')); //Permite usar Métodos PUT e DELETE
 
+app.use(bodyParser.json()); // Para lidar com JSON
+app.use(bodyParser.urlencoded({ extended: true })); // Para lidar com formulários
+
+
 // Armazenamento em memória para os Itens
 let itens = [];
 
@@ -18,8 +22,13 @@ app.get('/', function(req, res) {
 app.get('/tarefas', function(req, res) {
     const { status } = req.query;
 
+
+    // // Assegura que status é sempre definido
+    // item.status = item.status === 'on' ? 'on' : 'off'; 
+
+
     if (status) {
-        const filteredItens = itens.filter(item => item.status === (status === 'true' ? 'on' : 'off'));
+        const filteredItens = itens.filter(item => item.status !== undefined && item.status === (status === 'true' ? 'on' : 'off'));
         return res.json(filteredItens);
     }
 
@@ -31,11 +40,11 @@ app.get('/tarefas/novo', function(req, res) {
     res.render('form');
 });
 
-padraoid = 1
+let padraoid = 0
 // Rota que recebe os dados do novo cliente e o adiciona à lista
 app.post('/tarefas', function(req, res) {
-    console.log(req.body.item)
-    const item = req.body.item;
+    console.log(req.body)
+    const item = req.body;
     // itens.push(item);
     // res.redirect('/');
 
@@ -65,7 +74,15 @@ app.post('/tarefas', function(req, res) {
 
 // Rota que exibe o formulário para editar um cliente existente
 app.get('/tarefas/:id/editar', function(req, res) {
-    var id = req.params.id;
+    // var id = req.params.id;
+    // res.render('edit', { item: itens[id], id: id });
+
+    const id = parseInt(req.params.id, 10); // Converte para inteiro
+    
+    if (isNaN(id) || id < 0 || id >= itens.length) {
+        return res.status(404).send('Tarefa não encontrada');
+    }
+
     res.render('edit', { item: itens[id], id: id });
 });
 
@@ -73,7 +90,7 @@ app.get('/tarefas/:id/editar', function(req, res) {
 // Rota que recebe os dados editados do cliente e atualiza na lista
 app.put('/tarefas/:id', function(req, res) { //Usa o PUT para edição
     const id = req.params.id;
-    let updatedItem = req.body.item;
+    let updatedItem = req.body;
  
     // Tratamento do status
     updatedItem.status = updatedItem.status === 'on' ? 'on' : 'off';
